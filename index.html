@@ -293,7 +293,7 @@ footer{padding:36px 60px;background:var(--dark);display:flex;justify-content:spa
     </h1>
     <p class="hero-sub">Producción de contenido, estrategia de marca y gestión de redes sociales — desde un equipo que <strong>escucha primero y ejecuta con estándares de alto nivel.</strong></p>
     <div class="hero-cta">
-      <a href="https://wa.link/fp3to7" target="_blank" class="btn-main">📅 Agenda una cita</a>
+      <a href="#" onclick="openPopup();return false;" class="btn-main">📅 Agenda una cita</a>
       <a href="#resultados" class="btn-outline">Ver resultados →</a>
     </div>
   </div>
@@ -450,7 +450,7 @@ footer{padding:36px 60px;background:var(--dark);display:flex;justify-content:spa
     <h2 class="ctitle">Cotiza hoy.<br><em>Trabajemos</em><br>juntos.</h2>
     <p class="cdesc">Si tu marca está lista para el siguiente nivel, nosotros tenemos el equipo, la estrategia y la energía para llevarte ahí. Sin vueltas. Sin excusas.</p>
     <div class="citems">
-      <a href="mailto:aguakathemedia@gmail.com" class="citem"><div class="cico">✉</div>aguakathemedia@gmail.com</a>
+      <a href="#" onclick="openPopup();return false;" class="citem"><div class="cico">✉</div>aguakathemedia@gmail.com</a>
       <a href="https://wa.me/584227221714" target="_blank" target="_blank" class="citem"><div class="cico">📞</div>+58 422 722 1714</a>
       <a href="https://www.instagram.com/aguakathemedia" target="_blank" class="citem"><div class="cico">📸</div>@aguakathemedia</a>
     </div>
@@ -462,7 +462,7 @@ footer{padding:36px 60px;background:var(--dark);display:flex;justify-content:spa
     <br>
     <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px;">
       <a href="https://forms.gle/gzXbSyuhzJv2y9jU7" target="_blank" class="btn-main" style="display:inline-block;text-align:center;">Solicitar propuesta</a>
-      <a href="https://wa.link/fp3to7" target="_blank" class="btn-main" style="display:inline-block;text-align:center;background:var(--olive);">📅 Agendar una reunión hoy</a>
+      <a href="#" onclick="openPopup();return false;" class="btn-main" style="display:inline-block;text-align:center;background:var(--olive);">📅 Agendar una reunión hoy</a>
     </div>
   </div>
 </section>
@@ -470,7 +470,7 @@ footer{padding:36px 60px;background:var(--dark);display:flex;justify-content:spa
 <footer>
   <div class="flogo">AKT<span>Media</span></div>
   <p class="fcopy">© 2025 AguaKathe Media · Agencia de Mercadeo · Todos los derechos reservados</p>
-  <div class="flinks"><a href="https://www.instagram.com/aguakathemedia" target="_blank">Instagram</a><a href="https://wa.me/584227221714" target="_blank" target="_blank">WhatsApp</a><a href="mailto:aguakathemedia@gmail.com">Email</a></div>
+  <div class="flinks"><a href="https://www.instagram.com/aguakathemedia" target="_blank">Instagram</a><a href="https://wa.me/584227221714" target="_blank" target="_blank">WhatsApp</a><a href="#" onclick="openPopup();return false;">Email</a></div>
 </footer>
 
 <script>
@@ -503,12 +503,29 @@ const resObs=new IntersectionObserver(entries=>{
 const resEl=document.querySelector('.res-section');
 if(resEl)resObs.observe(resEl);
 
-// POPUP
-// Activate popup pointer events after animation
+// POPUP - activate pointer events after animation
 setTimeout(()=>{
   const ov=document.getElementById('popupOverlay');
   if(ov) ov.classList.add('active');
 },2100);
+
+function openPopup(){
+  const ov=document.getElementById('popupOverlay');
+  // Reset form in case it was used before
+  document.getElementById('popupForm').style.display='block';
+  document.getElementById('popupSuccess').style.display='none';
+  document.getElementById('popName').value='';
+  document.getElementById('popEmail').value='';
+  document.getElementById('popPhone').value='';
+  const btn=document.querySelector('.popup-btn');
+  btn.textContent='Quiero que me contacten \u2192';
+  btn.disabled=false;
+  // Show popup
+  ov.style.animation='none';
+  ov.style.display='flex';
+  ov.style.opacity='1';
+  ov.classList.add('active');
+}
 
 function closePopup(){
   const overlay=document.getElementById('popupOverlay');
@@ -516,6 +533,7 @@ function closePopup(){
   overlay.style.opacity='0';
   setTimeout(()=>{ overlay.style.display='none'; },350);
 }
+
 async function submitPopup(){
   const name=document.getElementById('popName').value.trim();
   const email=document.getElementById('popEmail').value.trim();
@@ -528,7 +546,7 @@ async function submitPopup(){
   btn.textContent='Enviando...';
   btn.disabled=true;
 
-  // 1. Send to Formspree (email to Gmail)
+  // 1. Send to Formspree → arrives at aguakathemedia@gmail.com
   try {
     const fd=new FormData();
     fd.append('name',name);
@@ -541,11 +559,11 @@ async function submitPopup(){
       headers:{'Accept':'application/json'},
       body:fd
     });
-  } catch(e){ console.log('Formspree error:',e); }
+  } catch(e){ console.log('Formspree:', e); }
 
-  // 2. ALWAYS also open WhatsApp with the data
+  // 2. ALWAYS open WhatsApp with the data
   const msg=encodeURIComponent(
-    'Hola AguaKathe Media! Me contacto desde su sitio web \u{1F951}'+
+    '\uD83E\uDD51 Hola AguaKathe Media! Me contacto desde su sitio web.' +
     '\n\nNombre: '+name+
     '\nCorreo: '+email+
     '\nTel\u00e9fono: '+phone+
@@ -553,12 +571,13 @@ async function submitPopup(){
   );
   window.open('https://wa.me/584227221714?text='+msg,'_blank');
 
-  // 3. Show success
+  // 3. Show success screen
   document.getElementById('popupForm').style.display='none';
   document.getElementById('popupSuccess').style.display='block';
   setTimeout(closePopup,3500);
 }
-// Close on overlay click
+
+// Close popup when clicking outside the box
 document.getElementById('popupOverlay').addEventListener('click',function(e){
   if(e.target===this) closePopup();
 });
